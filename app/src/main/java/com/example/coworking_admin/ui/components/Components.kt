@@ -92,8 +92,12 @@ fun InfoSlot(
 fun Options(
     onOptionClick: (DetailScreenState) -> Unit,
 ) {
-    Column {
-        Text(text = "Choose option")
+    Column(
+        Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "Choose option:", modifier = Modifier.padding(vertical = 20.dp))
         TextButton(onClick = { onOptionClick(DetailScreenState.ORDER) }) {
             Text(text = "Order")
         }
@@ -108,55 +112,72 @@ fun Payment(
     onSaveClick: (String) -> Unit,
 ) {
     var text by rememberSaveable { mutableStateOf("") }
-    Column {
-        TextField(
-            value = text,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            onValueChange = { text = it },
-            label = { Text("Label") },
-            singleLine = true
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+    verticalArrangement = Arrangement.SpaceBetween) {
+        Column {
+            TextField(
+                value = text,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                onValueChange = { text = it },
+                label = { Text("Label") },
+                singleLine = true
 
-        )
-        val radioOptions = listOf("cash", "card", "beer")
-        val (selectedOption, onOptionSelected)
-                = remember { mutableStateOf("") }
-        Column(Modifier.selectableGroup()) {
-            radioOptions.forEach { text ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .selectable(
+            )
+            val radioOptions = listOf("cash", "card", "beer")
+            val (selectedOption, onOptionSelected)
+                    = remember { mutableStateOf("") }
+            Column(Modifier.selectableGroup()) {
+                radioOptions.forEach { text ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = (text == selectedOption),
+                                onClick = { onOptionSelected(text) },
+                                role = Role.RadioButton
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
                             selected = (text == selectedOption),
-                            onClick = { onOptionSelected(text) },
-                            role = Role.RadioButton
+                            onClick = null // null recommended for accessibility with screenreaders
                         )
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = (text == selectedOption),
-                        onClick = null // null recommended for accessibility with screenreaders
-                    )
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.body1.merge(),
-                        modifier = Modifier.padding(start = 16.dp)
-                    )
+                        Text(
+                            text = text,
+                            style = MaterialTheme.typography.body1.merge(),
+                            modifier = Modifier.padding(start = 16.dp)
+                        )
+                    }
                 }
             }
         }
-        val checkedState = remember { mutableStateOf(false) }
-        Checkbox(
-            checked = checkedState.value,
-            onCheckedChange = { checkedState.value = it }
-        )
-        Button(onClick = {
-            onSaveClick(text)
-        }) {
-            Text("Save")
+
+       Column {
+            val checkedState = remember { mutableStateOf(false) }
+           Row {
+                Checkbox(
+                    checked = checkedState.value,
+                    onCheckedChange = { checkedState.value = it },
+                )
+               Text(
+                   text = "I Confirm!",
+                   style = MaterialTheme.typography.body1.merge(),
+                   modifier = Modifier.padding(start = 16.dp)
+               )
+            }
+            Button(
+                onClick = {
+                    onSaveClick(text)
+                },
+            ) {
+                Text("Save")
+            }
         }
     }
+
 }
 
 
